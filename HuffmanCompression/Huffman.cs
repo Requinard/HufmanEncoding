@@ -13,6 +13,8 @@ namespace HuffmanCompression
         public HuffmanTree parent { get; set; }
         public int weight { get; set; }
         public char value { get; set; }
+        public Dictionary<char, int> ProbabilityDict;
+        public string CompressedString;
 
         public HuffmanTree()
         {
@@ -21,6 +23,16 @@ namespace HuffmanCompression
             this.parent = null;
             this.weight = 0;
             this.value = (char)0;
+        }
+        public HuffmanTree(string toCompress)
+        {
+            this.node_left = null;
+            this.node_right = null;
+            this.parent = null;
+            this.weight = 0;
+            this.value = (char)0;            
+
+            createTree(toCompress);
         }
 
         private HuffmanTree(HuffmanTree node_left, HuffmanTree node_right, HuffmanTree parent, int weight, char value)
@@ -37,7 +49,7 @@ namespace HuffmanCompression
         /// </summary>
         /// <param name="toCompress">String that needs compressing</param>
         /// <returns>Complete Huffman priority queue</returns>
-        public void createTree(string toCompress)
+        private void createTree(string toCompress)
         {
             Dictionary<char, int> _wDict = cDict(toCompress);
 
@@ -51,7 +63,8 @@ namespace HuffmanCompression
             this.node_right = tree.node_right;
             this.weight = tree.weight;
             this.value = tree.value;
-            this.parent = tree.parent;          
+            this.parent = tree.parent;
+            this.ProbabilityDict = _wDict;
         }
 
         private HuffmanTree fillTree(PriorityQueue<HuffmanTree> _eQueue)

@@ -8,11 +8,11 @@ namespace HuffmanCompression
 {
     class HuffmanTree
     {
-        public HuffmanTree node_left { get; private set; }
-        public HuffmanTree node_right { get; private set; }
-        public HuffmanTree parent { get; private set; }
-        public int weight { get; private set; }
-        public char value { get; private set; }
+        public HuffmanTree node_left { get; set; }
+        public HuffmanTree node_right { get; set; }
+        public HuffmanTree parent { get; set; }
+        public int weight { get; set; }
+        public char value { get; set; }
 
         public HuffmanTree()
         {
@@ -37,13 +37,57 @@ namespace HuffmanCompression
         /// </summary>
         /// <param name="toCompress">String that needs compressing</param>
         /// <returns>Complete Huffman priority queue</returns>
-        public HuffmanTree createTree(string toCompress)
+        public void createTree(string toCompress)
         {
             Dictionary<char, int> _wDict = cDict(toCompress);
 
             _wDict = sDict(_wDict);
 
-            return this;
+            PriorityQueue <HuffmanTree> _eQueue = cDict(_wDict);
+
+            HuffmanTree tree = fillTree(_eQueue);
+
+            this.node_left = tree.node_left;
+            this.node_right = tree.node_right;
+            this.weight = tree.weight;
+            this.value = tree.value;
+            this.parent = tree.parent;          
+        }
+
+        private HuffmanTree fillTree(PriorityQueue<HuffmanTree> _eQueue)
+        {
+            while(_eQueue.count> 1)
+            {
+                HuffmanTree node1 = _eQueue.Dequeue();
+                HuffmanTree node2 = _eQueue.Dequeue();
+
+                HuffmanTree parent = new HuffmanTree();
+
+                parent.node_left = node1;
+                parent.node_right = node2;
+                node1.parent = parent;
+                node2.parent = parent;
+
+                parent.weight = node1.weight + node2.weight;
+
+                _eQueue.Enqueue(parent, parent.weight);
+            }
+
+            Console.WriteLine("done");
+
+            return _eQueue.Dequeue();
+        }
+        private PriorityQueue<HuffmanTree> cDict(Dictionary<char, int> _wDict)
+        {
+            ///Existing nodes
+            PriorityQueue<HuffmanTree> _nQueue = new PriorityQueue<HuffmanTree>();
+
+            foreach (var item in _wDict.Keys)
+            {
+                _nQueue.Enqueue(new HuffmanTree(null, null, null, _wDict[item], item), _wDict[item]);
+            }
+
+            return _nQueue;
         }
 
         /// <summary>

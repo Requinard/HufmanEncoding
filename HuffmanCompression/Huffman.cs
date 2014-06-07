@@ -39,9 +39,25 @@ namespace HuffmanCompression
         /// <returns>Complete Huffman priority queue</returns>
         public HuffmanTree createTree(string toCompress)
         {
-            Dictionary<char, int> weightDictionairy = createDictionairy(toCompress);
+            Dictionary<char, int> _wDict = cDict(toCompress);
+
+            _wDict = sDict(_wDict);
 
             return this;
+        }
+
+        /// <summary>
+        /// Returns a sorted dictionairy
+        /// </summary>
+        /// <param name="_wdict"></param>
+        /// <returns></returns>
+        private Dictionary<char, int> sDict(Dictionary<char, int> _wdict)
+        {
+            Console.WriteLine("Starting sorting procedure");
+
+            var _sDict = from entry in _wdict orderby entry.Value ascending select entry;
+
+            return _sDict.ToDictionary(t => t.Key, t => t.Value);
         }
 
         /// <summary>
@@ -49,12 +65,12 @@ namespace HuffmanCompression
         /// </summary>
         /// <param name="s">String that needs to be compressed</param>
         /// <returns>Dictionairy containing weight for each character in a string</returns>
-        private Dictionary<char, int> createDictionairy(string s)
+        private Dictionary<char, int> cDict(string s)
         {
             Console.WriteLine("Starting string compression");
             Dictionary<char, int> dict = new Dictionary<char, int>();
 
-            Console.WriteLine("Starting iterating through string")
+            Console.WriteLine("Starting iterating through string");
             foreach (char c in s)
             {
                 if (dict.ContainsKey(c))

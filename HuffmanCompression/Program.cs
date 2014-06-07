@@ -11,6 +11,11 @@ namespace HuffmanCompression
     {
         static void Main(string[] args)
         {
+            HuffmanTree tree = new HuffmanTree();
+
+            tree.createTree("j'aime aller sur le bord de l'eau les jeudis ou les jours impairs");
+
+            return;
         }
     }
 }

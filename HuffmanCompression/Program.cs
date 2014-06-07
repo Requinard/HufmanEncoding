@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace HuffmanCompression
 {
     class Program
@@ -11,10 +12,5 @@ namespace HuffmanCompression
         static void Main(string[] args)
         {
         }
-    }
-
-    class Hufmanntree
-    {
-
     }
 }

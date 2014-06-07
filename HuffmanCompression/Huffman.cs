@@ -33,6 +33,7 @@ namespace HuffmanCompression
             this.value = (char)0;            
 
             createTree(toCompress);
+            compressString(toCompress);
         }
 
         private HuffmanTree(HuffmanTree node_left, HuffmanTree node_right, HuffmanTree parent, int weight, char value)
@@ -42,6 +43,43 @@ namespace HuffmanCompression
             this.parent = parent;
             this.weight = weight;
             this.value = value;
+        }
+
+        private void compressString(string toCompress)
+        {
+            string newString = "";
+
+            foreach (char c in toCompress)
+            {
+                char path = (char)0;
+                int depth = 0;
+                HuffmanTree currentTree = this;
+                int prob = this.ProbabilityDict[c];
+
+
+                while(true)
+                {
+                    if (prob < currentTree.weight)
+                    {
+                        if (currentTree.node_left == null)
+                            break;
+                        currentTree = currentTree.node_left;
+                        path += (char)(1<<depth);
+                        depth++;
+                    }
+                    else
+                    {
+                        if (currentTree.node_right == null)
+                            break;
+                        currentTree = currentTree.node_right;
+                        depth++;
+                    }
+                }
+
+                newString += path;
+            }
+
+            this.CompressedString = newString;
         }
 
         /// <summary>

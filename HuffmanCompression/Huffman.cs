@@ -13,8 +13,10 @@ namespace HuffmanCompression
         public HuffmanTree parent { get; set; }
         public int weight { get; set; }
         public char value { get; set; }
+
         public Dictionary<char, int> ProbabilityDict;
-        public string CompressedString;
+
+        public Queue<bool> CompressedString;
 
         public HuffmanTree()
         {
@@ -30,8 +32,9 @@ namespace HuffmanCompression
             this.node_right = null;
             this.parent = null;
             this.weight = 0;
-            this.value = (char)0;            
+            this.value = (char)0;
 
+            this.CompressedString = new Queue<bool>();
             createTree(toCompress);
             compressString(toCompress);
         }
@@ -47,39 +50,30 @@ namespace HuffmanCompression
 
         private void compressString(string toCompress)
         {
-            string newString = "";
-
             foreach (char c in toCompress)
             {
-                char path = (char)0;
-                int depth = 0;
                 HuffmanTree currentTree = this;
                 int prob = this.ProbabilityDict[c];
 
 
                 while(true)
                 {
-                    if (prob < currentTree.weight)
+                    if (prob <= currentTree.node_left.weight)
                     {
                         if (currentTree.node_left == null)
                             break;
                         currentTree = currentTree.node_left;
-                        path += (char)(1<<depth);
-                        depth++;
+                        this.CompressedString.Enqueue(false);
                     }
                     else
                     {
                         if (currentTree.node_right == null)
                             break;
                         currentTree = currentTree.node_right;
-                        depth++;
+                        this.CompressedString.Enqueue(true);
                     }
                 }
-
-                newString += path;
             }
-
-            this.CompressedString = newString;
         }
 
         /// <summary>
@@ -107,7 +101,7 @@ namespace HuffmanCompression
 
         private HuffmanTree fillTree(PriorityQueue<HuffmanTree> _eQueue)
         {
-            while(_eQueue.count> 1)
+            while (_eQueue.count > 1)
             {
                 HuffmanTree node1 = _eQueue.Dequeue();
                 HuffmanTree node2 = _eQueue.Dequeue();
@@ -124,10 +118,14 @@ namespace HuffmanCompression
                 _eQueue.Enqueue(parent, parent.weight);
             }
 
-            Console.WriteLine("done");
-
             return _eQueue.Dequeue();
         }
+
+        /// <summary>
+        /// Creates a Priotity Queue from an unsorted dictionairy
+        /// </summary>
+        /// <param name="_wDict">Dictionairy with characters and weights</param>
+        /// <returns></returns>
         private PriorityQueue<HuffmanTree> cDict(Dictionary<char, int> _wDict)
         {
             ///Existing nodes
@@ -162,18 +160,14 @@ namespace HuffmanCompression
         /// <returns>Dictionairy containing weight for each character in a string</returns>
         private Dictionary<char, int> cDict(string s)
         {
-            Console.WriteLine("Starting string compression");
             Dictionary<char, int> dict = new Dictionary<char, int>();
 
-            Console.WriteLine("Starting iterating through string");
             foreach (char c in s)
             {
                 if (dict.ContainsKey(c))
                     dict[c] += 1;
                 else
                     dict[c] = 1;
-
-                Console.WriteLine("Char %s has appeared %d times", c, dict[c]);
             }
 
             return dict;

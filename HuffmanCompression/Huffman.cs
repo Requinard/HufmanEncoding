@@ -14,6 +14,10 @@ namespace HuffmanCompression
         public int weight { get; set; }
         public char value { get; set; }
 
+        public Dictionary<char, int> ProbabilityDict;
+
+        public Queue<bool> CompressedString;
+
         public HuffmanTree()
         {
             this.node_left = null;
@@ -51,7 +55,39 @@ namespace HuffmanCompression
             this.node_right = tree.node_right;
             this.weight = tree.weight;
             this.value = tree.value;
-            this.parent = tree.parent;          
+            this.parent = tree.parent;
+            this.ProbabilityDict = _wDict;
+
+            compressString(toCompress);
+        }
+
+        public void compressString(string toCompress)
+        {
+            this.CompressedString = new Queue<bool>();
+
+            foreach (char c in toCompress)
+            {
+                HuffmanTree currentTree = this;
+                int prob = this.ProbabilityDict[c];
+
+                while (true)
+                {
+                    if (currentTree.node_left != null && prob <= currentTree.node_left.weight)
+                    {
+                        if (currentTree.node_left.value == c)
+                            break;
+                        currentTree = currentTree.node_left;
+                        this.CompressedString.Enqueue(false);
+                    }
+                    else
+                    {
+                        if ((int)currentTree.node_right.value == c)
+                            break;
+                        currentTree = currentTree.node_right;
+                        this.CompressedString.Enqueue(true);
+                    }
+                }
+            }
         }
 
         private HuffmanTree fillTree(PriorityQueue<HuffmanTree> _eQueue)

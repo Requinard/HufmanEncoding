@@ -103,21 +103,27 @@ namespace HuffmanCompression
         {
             while (_eQueue.count > 1)
             {
+                ///Dequeue children
                 HuffmanTree node1 = _eQueue.Dequeue();
                 HuffmanTree node2 = _eQueue.Dequeue();
 
+                ///Create new parent
                 HuffmanTree parent = new HuffmanTree();
 
+                ///Set up relations
                 parent.node_left = node1;
                 parent.node_right = node2;
                 node1.parent = parent;
                 node2.parent = parent;
 
+                ///Give parent the weight of it's children combined
                 parent.weight = node1.weight + node2.weight;
 
+                ///Reinsert parent into priority queue
                 _eQueue.Enqueue(parent, parent.weight);
             }
 
+            ///Return the last object in the queue
             return _eQueue.Dequeue();
         }
 
